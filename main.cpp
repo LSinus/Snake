@@ -5,34 +5,92 @@
 #include <string>
 #include <cmath>
 
-
 struct size{
+    float start_x;
+    float start_y;
     int x;
     int y;
 };
+
+class Apple {
+    public:
+        sf::CircleShape apple;
+
+        Apple(const size map_size, const int seed){
+            generate(map_size, seed);
+            apple.setOrigin(15.f, 15.f);
+            apple.setRadius(15.f);
+            apple.setFillColor(sf::Color::Red);
+
+            flag = false;
+        };
+        
+        void generate(const size map_size, const int seed);
+        bool eat(sf::Vector2f snake_pos);
+        void eaten();
     
-void update(sf::RectangleShape* sprite, sf::Vector2f* velocity, float* x, float* y, sf::RectangleShape* map){
-    sf::Vector2f acceleration;
-    acceleration.x = 0;
-    acceleration.y = 0;
+    private:
+        sf::Vector2f position;
+        bool flag;
 
-    const float dAcc = 0.003f;
+        
+};
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-      acceleration.y -= dAcc;
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-      acceleration.x -= dAcc;
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-      acceleration.y += dAcc;
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-      acceleration.x += dAcc;
+void Apple::generate(const size map_size, const int seed){
+    srand(seed);
+    position.x = (map_size.start_x + apple.getOrigin().x) + (rand() % (int)(map_size.x - apple.getOrigin().x));
+    position.y = (map_size.start_y + apple.getOrigin().y) + (rand() % (int)(map_size.y - apple.getOrigin().y));
 
-    (*velocity) += acceleration;
+    flag = false;
+    apple.setPosition(position);
+
+
+    //std::cout<<"x: "<<position.x<<" y: "<<position.y<<'\n';
+}
+
+void Apple::eaten(){
+    
+    position.x = -100;
+    position.y = -100;
+    apple.setPosition(position);
+
+    //std::cout<<"x: "<<position.x<<" y: "<<position.y<<'\n';
+}
+
+bool Apple::eat(sf::Vector2f snake_pos){
+    if(snake_pos.x >= (position.x-25.f) && snake_pos.x <= (position.x+25.f) && snake_pos.y >= (position.y-25.f) && snake_pos.y <= (position.y+25.f) ) 
+       flag = true;
+
+    return flag;
+}
+
+ 
+void update(sf::RectangleShape* sprite, sf::Vector2f* velocity, float* x, float* y, sf::RectangleShape* map, int* input){
+
+    if (*input == 22){
+        velocity->x = 0;
+        velocity->y = -.0008f;
+    }
+
+    else if (*input == 0){
+        velocity->y = 0;
+        velocity->x = -.0008f;
+    }
+      
+    else if (*input == 18){
+        velocity->x = 0;
+        velocity->y = .0008f;
+    }
+      
+    else if (*input == 3){
+        velocity->y = 0;
+        velocity->x = .0008f;
+    }
+      
     
     (*x) += velocity->x;
     (*y) += velocity->y;
-    
-    (*velocity) = 0.51f * (*velocity);
+
 
     size map_size;
     map_size.x = map->getSize().x+map->getPosition().x;
@@ -42,22 +100,24 @@ void update(sf::RectangleShape* sprite, sf::Vector2f* velocity, float* x, float*
 
     if(*x<map->getPosition().x+sprite->getOrigin().x)
         *x = map->getPosition().x + sprite->getOrigin().x;
+        
 
     else if(*x>map_size.x - sprite->getOrigin().x)
         *x = map_size.x - sprite->getOrigin().x;
+        
 
     else if(*y<map->getPosition().y + sprite->getOrigin().y)
         *y = map->getPosition().y + sprite->getOrigin().y;
-
+        
     else if(*y>map_size.y - sprite->getOrigin().y)
         *y = map_size.y - sprite->getOrigin().y;
-
+        
     else
         sprite->setPosition(*x, *y);
 }
 
 
-void renderingThread(sf::RenderWindow* window,const sf::RectangleShape* sprite, sf::Text* text,const float* x,const float*y, sf::RectangleShape* rectangle, sf::Vector2f* velocity){
+void renderingThread(sf::RenderWindow* window,const sf::RectangleShape* sprite, sf::Text* text,const float* x,const float*y, sf::RectangleShape* rectangle, sf::Vector2f* velocity, Apple* apple, bool* eat){
     
     window->setActive(true);
     sf::Clock clock;
@@ -71,6 +131,7 @@ void renderingThread(sf::RenderWindow* window,const sf::RectangleShape* sprite, 
         window->clear(sf::Color(22, 102, 44, 255));
         window->draw(*text);
         window->draw(*rectangle);
+        window->draw(apple->apple);
         window->draw(*sprite);
         window->display();
 
@@ -79,7 +140,8 @@ void renderingThread(sf::RenderWindow* window,const sf::RectangleShape* sprite, 
         int framerate = roundf(pow(10,6)/frametime);
         std::string fps = std::to_string(framerate) + "FPS";
         text->setString(fps);
-        std::cout<<"x: "<<*x<<" y: "<<*y<<"\tVelocity: "<<velocity->x<<" "<<velocity->y<<'\n';
+        std::cout<<*eat<<'\n';
+        //std::cout<<"x: "<<*x<<" y: "<<*y<<"\tVelocity: "<<velocity->x<<" "<<velocity->y<<'\n';
     }
 
     //window->setActive(false);
@@ -94,11 +156,12 @@ int main(){
     if (!texture.loadFromFile("files/image.png", sf::IntRect(10, 10, 32, 32))){
         std::cerr<<"Impossibile caricare la texture";
     }*/
-
+    sf::Clock timer;
     sf::RenderWindow window(sf::VideoMode(800, 600), "Snake");
 
     window.setActive(false);
-    
+    window.setKeyRepeatEnabled(false);
+
     sf::Texture grass;
     if (!grass.loadFromFile("files/grass.jpg")){
         std::cerr<<"Impossibile caricare la texture";
@@ -136,12 +199,30 @@ int main(){
     y=50.f;
 
     sf::Vector2f velocity;
-    velocity.x = 0.f;
-    velocity.y = 0.f;
+    velocity.x = 0;
+    velocity.y = 0;
 
-    sf::Thread thread(std::bind(&renderingThread, &window, &snake, &fps, &x, &y, &map, &velocity));
+    int input = 3;
+    
+
+    sf::Time time;
+    time = timer.restart();
+    int seed = time.asMilliseconds();
+
+
+    size map_size;
+    map_size.start_x = map.getPosition().x;
+    map_size.start_y = map.getPosition().y;
+    map_size.x = map.getSize().x+map.getPosition().x;
+    map_size.y = map.getSize().y+map.getPosition().y;
+    Apple apple(map_size, seed);
+    
+
+    bool eat = false;
+
+
+    sf::Thread thread(std::bind(&renderingThread, &window, &snake, &fps, &x, &y, &map, &velocity, &apple, &eat));
     thread.launch();
-
 
     
     while (window.isOpen())
@@ -152,7 +233,8 @@ int main(){
                 switch (event.type){
                 
                     case sf::Event::KeyPressed:
-                        //std::cout<<"Tasto premuto: "<<event.key.code<<'\n';
+                        std::cout<<"Tasto premuto: "<<event.key.code<<'\n';
+                        input = event.key.code;
                         if(event.key.code==36){
                             window.close();
                             thread.terminate();
@@ -174,7 +256,19 @@ int main(){
                 }
             }
             if(window.hasFocus()){
-                update(&snake, &velocity, &x, &y, &map);
+                update(&snake, &velocity, &x, &y, &map, &input);
+                eat = apple.eat(snake.getPosition());
+                if(eat){
+                    //std::cout<<"eat"<<'\n';
+                    snake.setSize(sf::Vector2f(snake.getSize().x*2,snake.getSize().y));
+                    apple.eaten();
+                    apple.generate(map_size, seed);
+                    seed++;
+                    eat = false;
+                    
+                }
+                
+                //std::cout<<eat<<'\n';
                 window.setFramerateLimit(144);
             }
             else{

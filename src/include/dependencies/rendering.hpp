@@ -1,0 +1,1 @@
+void renderingThread(sf::RenderWindow* window,const sf::RectangleShape* sprite, sf::Text* text,const float* x,const float*y, sf::RectangleShape* rectangle, sf::Vector2f* velocity, Apple* apple, bool* eat);

@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "utility.hpp"
+#include "size.hpp"
 
 #include "apple.hpp"
 

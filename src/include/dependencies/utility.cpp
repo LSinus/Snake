@@ -5,9 +5,14 @@
 #include <string>
 #include <cmath>
 
+#include "size.hpp"
+#include "snake.hpp"
+
 #include "utility.hpp"
 
-void update(sf::RectangleShape* sprite, sf::Vector2f* velocity, float* x, float* y, sf::RectangleShape* map, int* input){
+void update(Snake* snake, sf::Vector2f* velocity, sf::RectangleShape* map, int* input){
+
+    sf::Vector2f position;
 
     if (*input == 22){
         velocity->x = 0;
@@ -29,32 +34,15 @@ void update(sf::RectangleShape* sprite, sf::Vector2f* velocity, float* x, float*
         velocity->x = .0008f;
     }
       
-    
-    (*x) += velocity->x;
-    (*y) += velocity->y;
+    for(int i = 0; i<snake->snake.size();i++){
+        position.x = snake->snake[i].getPosition().x;
+        position.y = snake->snake[i].getPosition().y;
 
+        position.x += velocity->x;
+        position.y += velocity->y;
 
-    size map_size;
-    map_size.x = map->getSize().x+map->getPosition().x;
-    map_size.y = map->getSize().y+map->getPosition().y;
+        snake->snake[i].setPosition(position);
+    }
 
-    //std::cout<<map_size.x<< " "<<map_size.y<<'\n';
-
-    if(*x<map->getPosition().x+sprite->getOrigin().x)
-        *x = map->getPosition().x + sprite->getOrigin().x;
-        
-
-    else if(*x>map_size.x - sprite->getOrigin().x)
-        *x = map_size.x - sprite->getOrigin().x;
-        
-
-    else if(*y<map->getPosition().y + sprite->getOrigin().y)
-        *y = map->getPosition().y + sprite->getOrigin().y;
-        
-    else if(*y>map_size.y - sprite->getOrigin().y)
-        *y = map_size.y - sprite->getOrigin().y;
-        
-    else
-        sprite->setPosition(*x, *y);
 }
 

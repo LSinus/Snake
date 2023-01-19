@@ -1,8 +1,11 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
+#include "dependencies/size.hpp"
+#include "dependencies/snake.hpp"
 #include "dependencies/utility.hpp"
 #include "dependencies/apple.hpp"
+
 #include "dependencies/rendering.hpp"
 
 #include <iostream>
@@ -32,11 +35,6 @@ int main(){
     map.setTexture(&grass);
     map.setPosition(30.f, 30.f);
     map.setFillColor(sf::Color::White);
-
-    sf::RectangleShape snake(sf::Vector2f(30.f, 30.f));
-    snake.setOrigin(15.f, 15.f);
-    snake.setPosition(200.f, 200.f);
-    snake.setFillColor(sf::Color(99,31,19,255));
 
     /*
     sf::Sprite sprite;
@@ -76,13 +74,16 @@ int main(){
     map_size.start_y = map.getPosition().y;
     map_size.x = map.getSize().x+map.getPosition().x;
     map_size.y = map.getSize().y+map.getPosition().y;
+
+    Snake snake(map_size, seed);
+
     Apple apple(map_size, seed);
     
 
     bool eat = false;
 
 
-    sf::Thread thread(std::bind(&renderingThread, &window, &snake, &fps, &x, &y, &map, &velocity, &apple, &eat));
+    sf::Thread thread(std::bind(&renderingThread, &window, &snake, &fps, &map, &velocity, &apple, &eat));
     thread.launch();
 
     
@@ -117,11 +118,11 @@ int main(){
                 }
             }
             if(window.hasFocus()){
-                update(&snake, &velocity, &x, &y, &map, &input);
-                eat = apple.eat(snake.getPosition());
+                update(&snake, &velocity, &map, &input);
+                eat = apple.eat(snake.snake[0].getPosition());
                 if(eat){
                     //std::cout<<"eat"<<'\n';
-                    snake.setSize(sf::Vector2f(snake.getSize().x*2,snake.getSize().y));
+                    snake.grow();
                     apple.eaten();
                     apple.generate(map_size, seed);
                     seed++;

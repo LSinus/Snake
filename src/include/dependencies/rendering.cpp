@@ -1,7 +1,8 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "utility.hpp"
+#include "size.hpp"
+#include "snake.hpp"
 #include "apple.hpp"
 
 #include <iostream>
@@ -9,7 +10,7 @@
 
 #include "rendering.hpp"
 
-void renderingThread(sf::RenderWindow* window,const sf::RectangleShape* sprite, sf::Text* text,const float* x,const float*y, sf::RectangleShape* rectangle, sf::Vector2f* velocity, Apple* apple, bool* eat){
+void renderingThread(sf::RenderWindow* window,const Snake* snake, sf::Text* text, sf::RectangleShape* rectangle, sf::Vector2f* velocity, Apple* apple, bool* eat){
     
     window->setActive(true);
     sf::Clock clock;
@@ -24,7 +25,10 @@ void renderingThread(sf::RenderWindow* window,const sf::RectangleShape* sprite, 
         window->draw(*text);
         window->draw(*rectangle);
         window->draw(apple->apple);
-        window->draw(*sprite);
+        for(int i=0; i<(snake->snake.size()); i++){
+            window->draw(snake->snake[i]);
+        }
+        
         window->display();
 
         time1 = clock.getElapsedTime();

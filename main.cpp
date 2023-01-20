@@ -53,10 +53,6 @@ int main(){
     fps.setFillColor(sf::Color::White);
     sf::Event event;
 
-    float x, y;
-    x=50.f;
-    y=50.f;
-
     sf::Vector2f velocity;
     velocity.x = 0;
     velocity.y = 0;

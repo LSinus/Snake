@@ -7,7 +7,7 @@
 
 
 void Apple::generate(const size map_size, const int seed){
-    srand(seed);
+    srand(seed+12938);
     position.x = (map_size.start_x + apple.getOrigin().x) + (rand() % (int)(map_size.x - apple.getOrigin().x));
     position.y = (map_size.start_y + apple.getOrigin().y) + (rand() % (int)(map_size.y - apple.getOrigin().y));
 

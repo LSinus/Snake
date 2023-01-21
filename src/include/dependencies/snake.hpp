@@ -1,14 +1,20 @@
+struct block{
+    sf::RectangleShape square;
+    sf::Vector2f position;
+    sf::Vector2f position_change;
+    int direction;
+};
+
 class Snake{
     public:
-        int prev_direction;
-        sf::Vector2f position_change;
-        std::vector<int> direction; 
-        std::vector<sf::RectangleShape> snake;
+        block head;
+        std::vector<block> body;
+
         Snake(const size map_size, const int seed);
         void generate(const size map_size, const int seed);
         void grow();
-        void die();
         void move();
+        bool die();
     private:
         sf::Vector2f position;
         //0 right, 1 down, 2 left, 3 up

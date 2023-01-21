@@ -82,12 +82,14 @@ int main(){
     sf::Thread thread(std::bind(&renderingThread, &window, &snake, &fps, &map, &velocity, &apple, &eat));
     thread.launch();
 
-    
-    while (window.isOpen())
-    {
+    sf::Clock update_timer;
+    sf::Time update_clock;
+
+    update_timer.restart();
+    int change_direction_countdown = 0;
+    while (window.isOpen()){
         
-            while (window.pollEvent(event))
-            {   
+            while (window.pollEvent(event)){   
                 switch (event.type){
                 
                     case sf::Event::KeyPressed:
@@ -113,9 +115,16 @@ int main(){
                         break;
                 }
             }
+
             if(window.hasFocus()){
-                update(&snake, &velocity, &map, &input);
-                eat = apple.eat(snake.snake[0].getPosition());
+                update_clock = update_timer.getElapsedTime();
+                if(update_clock.asMilliseconds() >= 3){
+                    std::cout<<change_direction_countdown<<'\n';
+                    update(&snake, &velocity, &map, &input, &change_direction_countdown);
+                    update_timer.restart();
+                }
+                
+                eat = apple.eat(snake.body[0].position);
                 if(eat){
                     //std::cout<<"eat"<<'\n';
                     snake.grow();
@@ -124,6 +133,9 @@ int main(){
                     seed++;
                     eat = false;
                     
+                }
+                if(snake.die()){
+                    window.close();
                 }
                 
                 //std::cout<<eat<<'\n';

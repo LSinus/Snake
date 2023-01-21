@@ -9,7 +9,6 @@ class Apple {
     
     private:
         sf::Vector2f position;
-        bool flag;
         
 };
 

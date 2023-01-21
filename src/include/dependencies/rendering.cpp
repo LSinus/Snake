@@ -20,14 +20,16 @@ void renderingThread(sf::RenderWindow* window,const Snake* snake, sf::Text* text
     while (window->isOpen()){
 
         clock.restart();
-        std::cout<<snake->snake.size()<<'\n';
+        //std::cout<<snake->snake.size()<<'\n';
         window->clear(sf::Color(22, 102, 44, 255));
         window->draw(*text);
         window->draw(*rectangle);
         window->draw(apple->apple);
-        for(int i=0; i<(snake->snake.size()); i++){
-            window->draw(snake->snake[i]);
+        for(int i=0; i<(snake->body.size()); i++){
+            //std::cout<<i<<": "<<snake->body[i].square.getPosition().x<<" "<<snake->body[i].square.getPosition().x<<'\n';
+            window->draw(snake->body[i].square);
         }
+        //std::cout<<'\n';
 
         //std::cout<<"change direction detected at: "<<snake->position_change.x<<" "<<snake->position_change.y<<'\n';
         //std::cout<<"next segment position: "<<snake->snake[1].getPosition().x<<" "<<snake->snake[1].getPosition().y<<'\n';

@@ -4,3 +4,5 @@ struct size{
     int x;
     int y;
 };
+
+float abs(sf::Vector2f);

@@ -10,66 +10,65 @@
 
 #include "utility.hpp"
 
-void update(Snake* snake, sf::Vector2f* velocity, sf::RectangleShape* map, int* input){
+void update(Snake* snake, sf::Vector2f* velocity, sf::RectangleShape* map, int* input, int* change_direction_countdown){
 
-    sf::Vector2f position;
-    snake->prev_direction = snake->direction[0];
-
-    if (*input == 22){
-        snake->direction[0] = 3;
-    }
-
-    else if (*input == 0){
-        snake->direction[0] = 2;
-    }
-      
-    else if (*input == 18){
-        snake->direction[0] = 1;
-    }
-      
-    else if (*input == 3){
-        snake->direction[0] = 0;
-    }
-
-    if(snake->direction[0] != snake->prev_direction){
-        snake->position_change = snake->snake[0].getPosition();
-    }
-      
-    for(int i = 0; i<snake->snake.size();i++){
-        sf::Vector2f current_position = snake->snake[i].getPosition();
-        if((int)current_position.x == (int)snake->position_change.x  && (int)current_position.y == (int)snake->position_change.y){
-            //std::cout<<i<<" ha cambiato posizione\n";
-            snake->direction[i] = snake->direction[0];
+    int prev_direction = snake->body[0].direction;
+    if((*change_direction_countdown)<=0){
+        if (*input == 22 && prev_direction != 1){
+        snake->body[0].direction = 3;
         }
 
-        switch (snake->direction[i]){
+        else if (*input == 0 && prev_direction != 0){
+            snake->body[0].direction = 2;
+        }
+        
+        else if (*input == 18 && prev_direction != 3){
+            snake->body[0].direction = 1;
+        }
+        
+        else if (*input == 3 && prev_direction != 2){
+            snake->body[0].direction = 0;
+        }
+
+    }
+
+    
+    if(snake->body[0].direction != prev_direction){
+        snake->body[0].position_change = snake->body[0].square.getPosition();
+        *change_direction_countdown = 40;
+    }
+    
+      
+    //std::cout<<"direction: "<<snake->body[0].direction<<'\n';
+
+    switch (snake->body[0].direction){
         case 0:
             velocity->y = 0;
-            velocity->x = .001f;
+            velocity->x = 1.f;
             break;
         case 1:
             velocity->x = 0;
-            velocity->y = .001f;
+            velocity->y = 1.f;
             break;
         case 2:
             velocity->y = 0;
-            velocity->x = -.001f;
+            velocity->x = -1.f;
             break;
         case 3:
             velocity->x = 0;
-            velocity->y = -.001f;
+            velocity->y = -1.f;
             break;
         default:
             break;
         }
-        position.x = snake->snake[i].getPosition().x;
-        position.y = snake->snake[i].getPosition().y;
 
-        position.x += velocity->x;
-        position.y += velocity->y;
+    snake->body[0].position.x += velocity->x;
+    snake->body[0].position.y += velocity->y;
 
-        snake->snake[i].setPosition(position);
-    }
+    snake->body[0].square.setPosition(snake->body[0].position);
 
+    snake->move();
+
+    (*change_direction_countdown)--;
 }
 

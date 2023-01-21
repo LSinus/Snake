@@ -11,7 +11,6 @@ void Apple::generate(const size map_size, const int seed){
     position.x = (map_size.start_x + apple.getOrigin().x) + (rand() % (int)(map_size.x - apple.getOrigin().x));
     position.y = (map_size.start_y + apple.getOrigin().y) + (rand() % (int)(map_size.y - apple.getOrigin().y));
 
-    flag = false;
     apple.setPosition(position);
 
 
@@ -28,10 +27,10 @@ void Apple::eaten(){
 }
 
 bool Apple::eat(sf::Vector2f snake_pos){
-    if(snake_pos.x >= (position.x-25.f) && snake_pos.x <= (position.x+25.f) && snake_pos.y >= (position.y-25.f) && snake_pos.y <= (position.y+25.f) ) 
-       flag = true;
+    if(abs(snake_pos - apple.getPosition())<20)
+        return true;
 
-    return flag;
+    return false;
 }
 
 Apple::Apple(const size map_size, const int seed){
@@ -39,6 +38,4 @@ Apple::Apple(const size map_size, const int seed){
     apple.setOrigin(15.f, 15.f);
     apple.setRadius(15.f);
     apple.setFillColor(sf::Color::Red);
-
-    flag = false;
 }

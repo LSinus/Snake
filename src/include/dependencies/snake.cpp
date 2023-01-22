@@ -16,13 +16,21 @@ Snake::Snake(const size map_size, const int seed){
     generate(map_size, seed);
 
     body.push_back(head);
+    grow();
+
+    map_start.x = map_size.start_x;
+    map_start.y = map_size.start_y;
+
+    map_end.x = map_size.end_x;
+    map_end.y = map_size.end_y;
+
 
 }
 
 void Snake::generate(const size map_size, const int seed){
     srand(seed);
-    head.position.x = (int)(map_size.start_x + head.square.getOrigin().x) + (rand() % (int)(map_size.x - head.square.getOrigin().x));
-    head.position.y = (int)(map_size.start_y + head.square.getOrigin().y) + (rand() % (int)(map_size.y - head.square.getOrigin().y));
+    head.position.x = (int)(map_size.start_x + head.square.getOrigin().x)*4 + (rand() % (int)((map_size.x - head.square.getOrigin().x)/2));
+    head.position.y = (int)(map_size.start_y + head.square.getOrigin().y)*4 + (rand() % (int)((map_size.y - head.square.getOrigin().y)/2));
 
     head.square.setPosition(position);
 }
@@ -38,7 +46,7 @@ void Snake::grow(){
 
     prev_position = body[last].position;
 
-    std::cout<<prev_position.x<<" "<<prev_position.y<<'\n';
+    //std::cout<<prev_position.x<<" "<<prev_position.y<<'\n';
 
     switch (body[last].direction){
         case 0:
@@ -105,12 +113,14 @@ void Snake::move(){
 
 bool Snake::die(){
     int size = body.size();
-
     if(size>1)
         for(int i=2; i<size; i++){
             if(abs(body[0].position - body[i].position)<20)
                 return true;
         }
 
+        if(body[0].position.x < map_start.x || body[0].position.x > map_end.x-20 || body[0].position.y < map_start.y || body[0].position.y > map_end.y-20)
+            return true;
+ 
     return false;
 }

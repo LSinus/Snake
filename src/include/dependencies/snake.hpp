@@ -17,5 +17,7 @@ class Snake{
         bool die();
     private:
         sf::Vector2f position;
+        sf::Vector2f map_start;
+        sf::Vector2f map_end;
         //0 right, 1 down, 2 left, 3 up
 };

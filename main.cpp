@@ -68,13 +68,17 @@ int main(){
     size map_size;
     map_size.start_x = map.getPosition().x;
     map_size.start_y = map.getPosition().y;
-    map_size.x = map.getSize().x+map.getPosition().x;
-    map_size.y = map.getSize().y+map.getPosition().y;
+    map_size.x = map.getSize().x;
+    map_size.y = map.getSize().y;
+    map_size.end_x = (map.getSize().x + map.getPosition().x);
+    map_size.end_y = (map.getSize().y + map.getPosition().y);
+
+    //std::cout<<"map_size.start_x: "<<map_size.start_x<<" map_size.x: "<<map_size.x<<" map_size.end_x: "<<map_size.end_x<<'\n';
 
     Snake snake(map_size, seed);
 
-    Apple apple(map_size, seed);
-    
+    Apple apple(map_size, seed, snake.body[0].position);
+
 
     bool eat = false;
 
@@ -87,13 +91,16 @@ int main(){
 
     update_timer.restart();
     int change_direction_countdown = 0;
+
+    double velocity_increment = 5;
+
     while (window.isOpen()){
         
             while (window.pollEvent(event)){   
                 switch (event.type){
                 
                     case sf::Event::KeyPressed:
-                        std::cout<<"Tasto premuto: "<<event.key.code<<'\n';
+                        //std::cout<<"Tasto premuto: "<<event.key.code<<'\n';
                         input = event.key.code;
                         if(event.key.code==36){
                             window.close();
@@ -118,8 +125,8 @@ int main(){
 
             if(window.hasFocus()){
                 update_clock = update_timer.getElapsedTime();
-                if(update_clock.asMilliseconds() >= 3){
-                    std::cout<<change_direction_countdown<<'\n';
+                if(update_clock.asMilliseconds() >= velocity_increment){
+                    //std::cout<<change_direction_countdown<<'\n';
                     update(&snake, &velocity, &map, &input, &change_direction_countdown);
                     update_timer.restart();
                 }
@@ -129,7 +136,7 @@ int main(){
                     //std::cout<<"eat"<<'\n';
                     snake.grow();
                     apple.eaten();
-                    apple.generate(map_size, seed);
+                    apple.generate(map_size, snake.body[0].position);
                     seed++;
                     eat = false;
                     
@@ -144,6 +151,9 @@ int main(){
             else{
                 window.setFramerateLimit(30);
             }
+
+            velocity_increment = velocity_increment - .00000001;
+            //std::cout<<velocity_increment<<'\n';
     }
         
 

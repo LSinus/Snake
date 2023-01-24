@@ -10,7 +10,7 @@
 
 #include "utility.hpp"
 
-void update(Snake* snake, sf::Vector2f* velocity, sf::RectangleShape* map, int* input, int* change_direction_countdown){
+bool update(Snake* snake, sf::Vector2f* velocity, sf::RectangleShape* map, int* input, int* change_direction_countdown){
 
     int prev_direction = snake->body[0].direction;
     if((*change_direction_countdown)<=0){
@@ -70,5 +70,7 @@ void update(Snake* snake, sf::Vector2f* velocity, sf::RectangleShape* map, int* 
     snake->move();
 
     (*change_direction_countdown)--;
+
+    return snake->die();
 }
 

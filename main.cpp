@@ -5,6 +5,7 @@
 #include "dependencies/snake.hpp"
 #include "dependencies/utility.hpp"
 #include "dependencies/apple.hpp"
+#include "dependencies/scoreboard.hpp"
 
 #include "dependencies/rendering.hpp"
 
@@ -21,7 +22,7 @@ int main(){
         std::cerr<<"Impossibile caricare la texture";
     }*/
     sf::Clock timer;
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Snake");
+    sf::RenderWindow window(sf::VideoMode(1000, 600), "Snake", sf::Style::Titlebar | sf::Style::Close);
 
     window.setActive(false);
     window.setKeyRepeatEnabled(false);
@@ -75,15 +76,29 @@ int main(){
 
     //std::cout<<"map_size.start_x: "<<map_size.start_x<<" map_size.x: "<<map_size.x<<" map_size.end_x: "<<map_size.end_x<<'\n';
 
+    Scoreboard scoreboard(font);
+
+    scoreboard.score.setFont(font);
+    scoreboard.score.setCharacterSize(20);
+    scoreboard.score.setFillColor(sf::Color::White);
+    scoreboard.score.setString("SCORE: 0");
+    scoreboard.score.setPosition(800,30);
+
+    scoreboard.bestScore.setFont(font);
+    scoreboard.bestScore.setCharacterSize(20);
+    scoreboard.bestScore.setFillColor(sf::Color::White);
+    scoreboard.bestScore.setString("BEST SCORE: ");
+    scoreboard.bestScore.setPosition(800,90);
+
     Snake snake(map_size, seed);
 
-    Apple apple(map_size, seed, snake.body[0].position);
+    Apple apple(map_size, seed);
 
 
     bool eat = false;
 
 
-    sf::Thread thread(std::bind(&renderingThread, &window, &snake, &fps, &map, &velocity, &apple, &eat));
+    sf::Thread thread(std::bind(&renderingThread, &window, &fps, &map, &scoreboard, &snake, &apple));
     thread.launch();
 
     sf::Clock update_timer;
@@ -93,9 +108,11 @@ int main(){
     int change_direction_countdown = 0;
 
     double velocity_increment = 5;
-
+    bool isAlmostDead = false;
+    bool isDead = false;
+    int apple_index;
     while (window.isOpen()){
-        
+
             while (window.pollEvent(event)){   
                 switch (event.type){
                 
@@ -127,22 +144,24 @@ int main(){
                 update_clock = update_timer.getElapsedTime();
                 if(update_clock.asMilliseconds() >= velocity_increment){
                     //std::cout<<change_direction_countdown<<'\n';
-                    update(&snake, &velocity, &map, &input, &change_direction_countdown);
+                    isDead = update(&snake, &velocity, &map, &input, &change_direction_countdown);
                     update_timer.restart();
                 }
                 
-                eat = apple.eat(snake.body[0].position);
+                eat = apple.eat(snake.body[0].position, &apple_index);
+                
                 if(eat){
                     //std::cout<<"eat"<<'\n';
                     snake.grow();
-                    apple.eaten();
-                    apple.generate(map_size, snake.body[0].position);
+                    apple.eaten(apple_index);
+                    apple.generate(map_size, snake.body[0].position, apple_index);
                     seed++;
                     eat = false;
                     
                 }
-                if(snake.die()){
+                if(isDead){
                     window.close();
+                    thread.terminate();
                 }
                 
                 //std::cout<<eat<<'\n';
@@ -152,7 +171,14 @@ int main(){
                 window.setFramerateLimit(30);
             }
 
-            velocity_increment = velocity_increment - .00000001;
+            velocity_increment = velocity_increment - .00000005;
+            if(velocity_increment<3.5 && apple.apple.size() == 1){
+                apple.addApple(map_size, seed);
+            }
+
+            if(velocity_increment<2.5 && apple.apple.size() == 2){
+                apple.addApple(map_size, seed);
+            }
             //std::cout<<velocity_increment<<'\n';
     }
         

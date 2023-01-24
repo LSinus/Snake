@@ -1,1 +1,1 @@
-void renderingThread(sf::RenderWindow* window,const Snake* snake, sf::Text* text, sf::RectangleShape* rectangle, sf::Vector2f* velocity, Apple* apple, bool* eat);
+void renderingThread(sf::RenderWindow* window, sf::Text* text, sf::RectangleShape* map, Scoreboard* scoreboard, const Snake* snake, Apple* apple);

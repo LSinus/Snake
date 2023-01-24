@@ -1,11 +1,17 @@
+struct apple_container{
+    sf::CircleShape circle;
+    sf::Vector2f position;
+};
+
 class Apple {
     public:
-        sf::CircleShape apple;
+        std::vector<apple_container> apple;
 
-        Apple(const size map_size, const int seed, const sf::Vector2f snake_pos);        
-        void generate(const size map_size, const sf::Vector2f snake_pos);
-        bool eat(sf::Vector2f snake_pos);
-        void eaten();
+        Apple(const size map_size, const int seed);        
+        void generate(const size map_size, const sf::Vector2f snake_pos, int index);
+        bool eat(sf::Vector2f snake_pos,int* index);
+        void eaten(int index);
+        void addApple(const size map_size, const int seed);
     
     private:
         sf::Vector2f position;

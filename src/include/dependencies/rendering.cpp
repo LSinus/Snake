@@ -4,13 +4,14 @@
 #include "size.hpp"
 #include "snake.hpp"
 #include "apple.hpp"
+#include "scoreboard.hpp"
 
 #include <iostream>
 #include <cmath>
 
 #include "rendering.hpp"
 
-void renderingThread(sf::RenderWindow* window,const Snake* snake, sf::Text* text, sf::RectangleShape* rectangle, sf::Vector2f* velocity, Apple* apple, bool* eat){
+void renderingThread(sf::RenderWindow* window, sf::Text* text, sf::RectangleShape* map, Scoreboard* scoreboard, const Snake* snake, Apple* apple){
     
     window->setActive(true);
     sf::Clock clock;
@@ -23,8 +24,15 @@ void renderingThread(sf::RenderWindow* window,const Snake* snake, sf::Text* text
         //std::cout<<snake->snake.size()<<'\n';
         window->clear(sf::Color(22, 102, 44, 255));
         window->draw(*text);
-        window->draw(*rectangle);
-        window->draw(apple->apple);
+
+        window->draw(scoreboard->background);
+        window->draw(scoreboard->score);
+        window->draw(scoreboard->bestScore);
+        window->draw(*map);
+         for(int i=0; i<(apple->apple.size()); i++){
+            window->draw(apple->apple[i].circle);
+        }
+        window->draw(apple->apple[0].circle);
         for(int i=0; i<(snake->body.size()); i++){
             //std::cout<<i<<": "<<snake->body[i].square.getPosition().x<<" "<<snake->body[i].square.getPosition().x<<'\n';
             window->draw(snake->body[i].square);
@@ -40,7 +48,9 @@ void renderingThread(sf::RenderWindow* window,const Snake* snake, sf::Text* text
         float frametime = time1.asMicroseconds();
         int framerate = roundf(pow(10,6)/frametime);
         std::string fps = std::to_string(framerate) + "FPS";
+        std::string score = "SCORE: " + std::to_string(snake->body.size()-2);
         text->setString(fps);
+        scoreboard->score.setString(score);
         //std::cout<<*eat<<'\n';
         //std::cout<<"x: "<<*x<<" y: "<<*y<<"\tVelocity: "<<velocity->x<<" "<<velocity->y<<'\n';
     }

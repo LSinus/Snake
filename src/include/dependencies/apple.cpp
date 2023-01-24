@@ -2,6 +2,8 @@
 #include <SFML/Window.hpp>
 
 #include "size.hpp"
+#include "snake.hpp"
+#include <fstream>
 #include <iostream>
 
 #include "apple.hpp"
@@ -14,8 +16,13 @@ Apple::Apple(const size map_size, const int seed){
     temp.circle.setRadius(15.f);
     temp.circle.setFillColor(sf::Color::Red);
 
-    temp.position.x = (map_size.start_x + 50) + (rand() % (int)(map_size.x - 100));  //DA RIVEDERE A VOLTE LA MELA SPAWNA SUL BORDO
-    temp.position.y = (map_size.start_y + 50) + (rand() % (int)(map_size.y - 100));
+
+    for(int i=0;i<1000;i++){
+        temp.position.x = (map_size.start_x + 70) + (rand() % (int)(map_size.x - 120));  //DA RIVEDERE A VOLTE LA MELA SPAWNA SUL BORDO
+        temp.position.y = (map_size.start_y + 70) + (rand() % (int)(map_size.y - 120));
+
+    }
+
     
     
 
@@ -24,16 +31,32 @@ Apple::Apple(const size map_size, const int seed){
     
 }
 
-void Apple::generate(const size map_size, const sf::Vector2f snake_pos, int index){
-    //for(int i=0;i<apple.size();i++){
-        position.x = (map_size.start_x + 50) + (rand() % (int)(map_size.x - 100));  //DA RIVEDERE A VOLTE LA MELA SPAWNA SUL BORDO
-        position.y = (map_size.start_y + 50) + (rand() % (int)(map_size.y - 100));
+void Apple::generate(const size map_size, const Snake snake, int index){
+    bool over_forbidden_position = false;
+    do{ 
+        over_forbidden_position = false;
+        position.x = (map_size.start_x + 70) + (rand() % (int)(map_size.x - 120));  //DA RIVEDERE A VOLTE LA MELA SPAWNA SUL BORDO
+        position.y = (map_size.start_y + 70) + (rand() % (int)(map_size.y - 120));
 
-        if(abs(position - snake_pos)<100) //DA RIVEDERE (IMPLEMENTAZIONE ERRATA) AGGIUNGERE CONTROLLO SU OGNI PEZZO DEL SERPENTE
+        for(int i=0;i<snake.body.size();i++){
+            if(abs(position - snake.body[i].position)<50)
+                over_forbidden_position = true;
+        }
+        if(apple.size()>1){
+            for(int i=0; i<apple.size();i++){
+                if(i!=index && abs(position - apple[i].position)<100)
+                    over_forbidden_position = true;
+            }
+        }
+    
+    }while(over_forbidden_position);
+        
+
+        /*if(abs(position - snake_pos)<100) //DA RIVEDERE (IMPLEMENTAZIONE ERRATA) AGGIUNGERE CONTROLLO SU OGNI PEZZO DEL SERPENTE
             position.x += 40;
-            position.y += 40;
+            position.y += 40;*/
 
-        apple[index].circle.setPosition(position);
+    apple[index].circle.setPosition(position);
     //}
 
 

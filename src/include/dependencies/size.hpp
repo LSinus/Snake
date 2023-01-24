@@ -7,4 +7,5 @@ struct size{
     int y;
 };
 
+
 float abs(sf::Vector2f);

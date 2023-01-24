@@ -157,7 +157,7 @@ int main(){
                     //std::cout<<"eat"<<'\n';
                     snake.grow();
                     apple.eaten(apple_index);
-                    apple.generate(map_size, snake.body[0].position, apple_index);
+                    apple.generate(map_size, snake, apple_index);
                     seed++;
                     eat = false;
                     
@@ -170,7 +170,7 @@ int main(){
                 
                 //std::cout<<eat<<'\n';
                 window.setFramerateLimit(144);
-                velocity_increment = velocity_increment - .00000005;
+                velocity_increment = velocity_increment - .00000003;
                 
                 if(velocity_increment<3.5 && apple.apple.size() == 1){
                     apple.addApple(map_size, seed);

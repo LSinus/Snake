@@ -1,7 +1,7 @@
 class Scoreboard{
     public:
         Scoreboard(sf::Font font);
-        void pickUpData();
+        std::string pickUpData();
         void saveData();
 
         sf::RectangleShape background;

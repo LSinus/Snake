@@ -22,7 +22,7 @@ int main(){
         std::cerr<<"Impossibile caricare la texture";
     }*/
     sf::Clock timer;
-    sf::RenderWindow window(sf::VideoMode(1000, 600), "Snake", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(1020, 600), "Snake", sf::Style::Titlebar | sf::Style::Close);
 
     window.setActive(false);
     window.setKeyRepeatEnabled(false);
@@ -87,7 +87,8 @@ int main(){
     scoreboard.bestScore.setFont(font);
     scoreboard.bestScore.setCharacterSize(20);
     scoreboard.bestScore.setFillColor(sf::Color::White);
-    scoreboard.bestScore.setString("BEST SCORE: ");
+    std::string best_score = "BEST SCORE: " + scoreboard.pickUpData();
+    scoreboard.bestScore.setString(best_score);
     scoreboard.bestScore.setPosition(800,90);
 
     Snake snake(map_size, seed);
@@ -120,6 +121,7 @@ int main(){
                         //std::cout<<"Tasto premuto: "<<event.key.code<<'\n';
                         input = event.key.code;
                         if(event.key.code==36){
+                            scoreboard.saveData();
                             window.close();
                             thread.terminate();
                             }
@@ -131,6 +133,7 @@ int main(){
                         break;
 
                     case sf::Event::Closed:
+                        scoreboard.saveData();
                         window.close();
                         thread.terminate();
                         break;
@@ -160,25 +163,28 @@ int main(){
                     
                 }
                 if(isDead){
+                    scoreboard.saveData();
                     window.close();
                     thread.terminate();
                 }
                 
                 //std::cout<<eat<<'\n';
                 window.setFramerateLimit(144);
+                velocity_increment = velocity_increment - .00000005;
+                
+                if(velocity_increment<3.5 && apple.apple.size() == 1){
+                    apple.addApple(map_size, seed);
+                }
+
+                if(velocity_increment<2.5 && apple.apple.size() == 2){
+                    apple.addApple(map_size, seed);
+                }
             }
             else{
                 window.setFramerateLimit(30);
             }
 
-            velocity_increment = velocity_increment - .00000005;
-            if(velocity_increment<3.5 && apple.apple.size() == 1){
-                apple.addApple(map_size, seed);
-            }
 
-            if(velocity_increment<2.5 && apple.apple.size() == 2){
-                apple.addApple(map_size, seed);
-            }
             //std::cout<<velocity_increment<<'\n';
     }
         

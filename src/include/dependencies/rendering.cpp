@@ -11,7 +11,7 @@
 
 #include "rendering.hpp"
 
-void renderingThread(sf::RenderWindow* window, sf::Text* text, sf::RectangleShape* map, Scoreboard* scoreboard, const Snake* snake, Apple* apple){
+void renderingThread(sf::RenderWindow* window,sf::RectangleShape* background, sf::Text* text, sf::RectangleShape* map, Scoreboard* scoreboard, const Snake* snake, Apple* apple){
     
     window->setActive(true);
     sf::Clock clock;
@@ -23,12 +23,13 @@ void renderingThread(sf::RenderWindow* window, sf::Text* text, sf::RectangleShap
         clock.restart();
         //std::cout<<snake->snake.size()<<'\n';
         window->clear(sf::Color(22, 102, 44, 255));
-        window->draw(*text);
+        window->draw(*background);
+        //window->draw(*text);
 
-        window->draw(scoreboard->background);
+        //window->draw(scoreboard->background);
         window->draw(scoreboard->score);
         window->draw(scoreboard->bestScore);
-        window->draw(*map);
+        //window->draw(*map);
          for(int i=0; i<(apple->apple.size()); i++){
             window->draw(apple->apple[i].circle);
         }

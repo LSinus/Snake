@@ -8,20 +8,22 @@
 
 #include "apple.hpp"
 
-Apple::Apple(const size map_size, const int seed){
+Apple::Apple(const size map_size, const int seed, const sf::Texture* texture){
     apple_container temp;
     srand(seed+12938);
 
 
-    temp.circle.setRadius(15.f);
-    temp.circle.setFillColor(sf::Color::Red);
+
+    //temp.circle.setRadius(15.f);
+    //temp.circle.setFillColor(sf::Color::Red);
+    temp.circle.setTexture(*texture, false);
 
 
-    for(int i=0;i<1000;i++){
-        temp.position.x = (map_size.start_x + 70) + (rand() % (int)(map_size.x - 120));  //DA RIVEDERE A VOLTE LA MELA SPAWNA SUL BORDO
-        temp.position.y = (map_size.start_y + 70) + (rand() % (int)(map_size.y - 120));
+    //for(int i=0;i<1000;i++){
+    temp.position.x = (map_size.start_x + 70) + (rand() % (int)(map_size.x - 120));  //DA RIVEDERE A VOLTE LA MELA SPAWNA SUL BORDO
+    temp.position.y = (map_size.start_y + 70) + (rand() % (int)(map_size.y - 120));
 
-    }
+    //}
 
     
     
@@ -32,6 +34,8 @@ Apple::Apple(const size map_size, const int seed){
 }
 
 void Apple::generate(const size map_size, const Snake snake, int index){
+    apple[index].circle.setScale(1,1);
+
     bool over_forbidden_position = false;
     do{ 
         over_forbidden_position = false;
@@ -64,6 +68,10 @@ void Apple::generate(const size map_size, const Snake snake, int index){
     //std::cout<<"x: "<<position.x<<" y: "<<position.y<<'\n';
 }
 
+void Apple::eatAnimation(int index){
+    apple[index].circle.setScale(3,3);
+}
+
 void Apple::eaten(int index){
     
     position.x = -100;
@@ -85,13 +93,14 @@ bool Apple::eat(sf::Vector2f snake_pos, int* index){
     return false;
 }
 
-void Apple::addApple(const size map_size, const int seed){
+void Apple::addApple(const size map_size, const int seed, const sf::Texture* texture){
     apple_container temp;
     srand(seed+12938);
 
 
-    temp.circle.setRadius(15.f);
-    temp.circle.setFillColor(sf::Color::Red);
+    //temp.circle.setRadius(15.f);
+    //temp.circle.setFillColor(sf::Color::Red);
+    temp.circle.setTexture(*texture, false);
 
     temp.position.x = (map_size.start_x + 50) + (rand() % (int)(map_size.x - 100));  //DA RIVEDERE A VOLTE LA MELA SPAWNA SUL BORDO
     temp.position.y = (map_size.start_y + 50) + (rand() % (int)(map_size.y - 100));

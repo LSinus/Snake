@@ -1,1 +1,1 @@
-void renderingThread(sf::RenderWindow* window, sf::Text* text, sf::RectangleShape* map, Scoreboard* scoreboard, const Snake* snake, Apple* apple);
+void renderingThread(sf::RenderWindow* window,sf::RectangleShape* background, sf::Text* text, sf::RectangleShape* map, Scoreboard* scoreboard, const Snake* snake, Apple* apple);

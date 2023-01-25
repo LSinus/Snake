@@ -72,7 +72,6 @@ void Scoreboard::saveData(){
     int file_score_i = std::stoi(file_score);
         std::string current_score_s = score.getString();
         current_score_s.erase(0,7);
-        //std::cout<<current_score_s<<'\n';
         int current_score_i = std::stoi(current_score_s);
 
     if(file_score_i < current_score_i){

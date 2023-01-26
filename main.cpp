@@ -27,13 +27,8 @@ int main(){
     window.setActive(false);
     window.setKeyRepeatEnabled(false);
 
-    sf::Texture wall;
-    if (!wall.loadFromFile("src/imgs/background3.jpg")){
-        std::cerr<<"Impossibile caricare la texture";
-    }
-
-    sf::Texture grass;
-    if (!grass.loadFromFile("src/imgs/grass.jpg")){
+    sf::Texture frame;
+    if (!frame.loadFromFile("src/imgs/background4.jpg")){
         std::cerr<<"Impossibile caricare la texture";
     }
 
@@ -41,24 +36,60 @@ int main(){
     if (!apple_texture.loadFromFile("src/texture/mela.png")){
         std::cerr<<"Impossibile caricare la texture";
     }
-    apple_texture.isSmooth();
-        //apple_texture.setSmooth(true);
 
-    grass.setSmooth(true);
-    wall.setSmooth(true);
-    sf::RectangleShape background(sf::Vector2f(1018,600));
+    texture snake_texture;
+    //body texture
+    if (!snake_texture.body[0].loadFromFile("src/texture/body_0.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.body[1].loadFromFile("src/texture/body_1.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.body[2].loadFromFile("src/texture/body_2.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.body[3].loadFromFile("src/texture/body_3.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+
+    //head texture
+    if (!snake_texture.head[0].loadFromFile("src/texture/head_0.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.head[1].loadFromFile("src/texture/head_1.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.head[2].loadFromFile("src/texture/head_2.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.head[3].loadFromFile("src/texture/head_3.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+
+    //tail texture
+    if (!snake_texture.tail[0].loadFromFile("src/texture/tail_0.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.tail[1].loadFromFile("src/texture/tail_1.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.tail[2].loadFromFile("src/texture/tail_2.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+    if (!snake_texture.tail[3].loadFromFile("src/texture/tail_3.png")){
+        std::cerr<<"Impossibile caricare la texture";
+    }
+
+    frame.setSmooth(true);
+    apple_texture.setSmooth(true);
+
+    sf::RectangleShape background(sf::Vector2f(1020,600));
     background.setPosition(0.f, 0.f);
-    background.setTexture(&wall);
+    background.setTexture(&frame);
+
     sf::RectangleShape map(sf::Vector2f(942.f, 480.f));
-    map.setTexture(&grass);
     map.setPosition(38.f, 38.f);
     map.setFillColor(sf::Color::White);
-
-    /*
-    sf::Sprite sprite;
-    sprite.setTexture(texture);
-    sprite.setTextureRect(sf::IntRect(10, 10, 32, 32));
-    sprite.setPosition(sf::Vector2f(10.f, 50.f));*/
 
     std::string frames = "0";
 
@@ -75,13 +106,11 @@ int main(){
     velocity.x = 0;
     velocity.y = 0;
 
-    int input = 3;
-    
-
     sf::Time time;
     time = timer.restart();
     int seed = time.asMilliseconds();
 
+    int input = -1;
 
     size map_size;
     map_size.start_x = map.getPosition().x;
@@ -90,8 +119,6 @@ int main(){
     map_size.y = map.getSize().y;
     map_size.end_x = (map.getSize().x + map.getPosition().x);
     map_size.end_y = (map.getSize().y + map.getPosition().y);
-
-    //std::cout<<"map_size.start_x: "<<map_size.start_x<<" map_size.x: "<<map_size.x<<" map_size.end_x: "<<map_size.end_x<<'\n';
 
     Scoreboard scoreboard(font);
 
@@ -107,17 +134,17 @@ int main(){
     std::string best_score = "BEST: " + scoreboard.pickUpData();
     scoreboard.bestScore.setString(best_score);
     if(stoi(scoreboard.pickUpData())/10 == 0){
-        scoreboard.bestScore.setPosition(795,545);
+        scoreboard.bestScore.setPosition(815,545);
     }
     else if(stoi(scoreboard.pickUpData())/10 <= 10){
-        scoreboard.bestScore.setPosition(787,545);
+        scoreboard.bestScore.setPosition(807,545);
     }
     else{
-        scoreboard.bestScore.setPosition(780,545);
+        scoreboard.bestScore.setPosition(800,545);
     }
     
 
-    Snake snake(map_size, seed);
+    Snake snake(map_size, seed, &snake_texture);
 
     Apple apple(map_size, seed, &apple_texture);
     
@@ -187,7 +214,7 @@ int main(){
                 update_clock = update_timer.getElapsedTime();
                 if(update_clock.asMilliseconds() >= velocity_increment){
                     //std::cout<<change_direction_countdown<<'\n';
-                    isDead = update(&snake, &velocity, &map, &input, &change_direction_countdown);
+                    isDead = update(&snake, &velocity, &map, &input, &change_direction_countdown, &snake_texture);
                     update_timer.restart();
                 }
 
@@ -196,7 +223,7 @@ int main(){
                 if(eat){
                     apple.eaten(apple_index);
                     apple.generate(map_size, snake, apple_index);
-                    snake.grow();
+                    snake.grow(&snake_texture);
                     eat = false;    
                 }
                 if(isDead){

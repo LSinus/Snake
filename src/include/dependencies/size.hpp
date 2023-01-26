@@ -7,5 +7,11 @@ struct size{
     int y;
 };
 
+struct texture{
+    sf::Texture head[4];
+    sf::Texture body[4];
+    sf::Texture tail[4];
+};
+
 
 float abs(sf::Vector2f);

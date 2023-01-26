@@ -1,5 +1,5 @@
 struct block{
-    sf::RectangleShape square;
+    sf::Sprite square;
     sf::Vector2f position;
     sf::Vector2f position_change;
     int direction;
@@ -10,10 +10,10 @@ class Snake{
         block head;
         std::vector<block> body;
 
-        Snake(const size map_size, const int seed);
+        Snake(const size map_size, const int seed, const texture* snake_texture);
         void generate(const size map_size, const int seed);
-        void grow();
-        void move();
+        void grow(const texture* snake_texture);
+        void move(const texture* snake_texture);
         bool die();
     private:
         sf::Vector2f position;

@@ -9,14 +9,30 @@
 #include "snake.hpp"
 
 
-Snake::Snake(const size map_size, const int seed){
-    head.direction = 0;
-    head.square.setSize(sf::Vector2f(20.f,20.f));
-    head.square.setFillColor(sf::Color::Blue);
+Snake::Snake(const size map_size, const int seed, const texture* snake_texture){
+    srand(seed);
+    /*head.square.setSize(sf::Vector2f(20.f,20.f));
+    head.square.setFillColor(sf::Color::Blue);*/
     generate(map_size, seed);
+    
+    head.direction = (int)rand()%4;
+    if(head.direction == 0){
+        head.square.setTexture(snake_texture->head[0], false);
+    }
+    else if(head.direction == 1){
+        head.square.setTexture(snake_texture->head[1], false);
+    }
+    else if(head.direction == 2){
+        head.square.setTexture(snake_texture->head[2], false);
+    }
+    else if(head.direction == 3){
+        head.square.setTexture(snake_texture->head[3], false);
+    }
+    
 
     body.push_back(head);
-    grow();
+    
+    grow(snake_texture);
 
     map_start.x = map_size.start_x;
     map_start.y = map_size.start_y;
@@ -35,12 +51,23 @@ void Snake::generate(const size map_size, const int seed){
     head.square.setPosition(position);
 }
 
-void Snake::grow(){
+void Snake::grow(const texture* snake_texture){
     block temp;
     int last = body.size()-1;
     temp.direction = body[last].direction;
-    temp.square.setSize(sf::Vector2f(20.f,20.f));
-    temp.square.setFillColor(sf::Color::Blue);
+    
+    if(temp.direction == 0){
+        temp.square.setTexture(snake_texture->tail[0], false);
+    }
+    else if(temp.direction == 1){
+        temp.square.setTexture(snake_texture->tail[1], false);
+    }
+    else if(temp.direction == 2){
+        temp.square.setTexture(snake_texture->tail[2], false);
+    }
+    else if(temp.direction == 3){
+        temp.square.setTexture(snake_texture->tail[3], false);
+    }
 
     sf::Vector2f prev_position;
 
@@ -50,30 +77,45 @@ void Snake::grow(){
 
     switch (body[last].direction){
         case 0:
-            temp.position.x = prev_position.x - body[last].square.getSize().x;
+            temp.position.x = prev_position.x - 24;//body[last].square.getSize().x;
             temp.position.y = prev_position.y;
             break;
         case 1:
             temp.position.x = prev_position.x;
-            temp.position.y = prev_position.y - body[last].square.getSize().y;
+            temp.position.y = prev_position.y - 24;//body[last].square.getSize().y;
             break;
         case 2:
-            temp.position.x = prev_position.x + body[last].square.getSize().x;
+            temp.position.x = prev_position.x + 24;//body[last].square.getSize().x;
             temp.position.y = prev_position.y;
             break;
         case 3:
             temp.position.x = prev_position.x;
-            temp.position.y = prev_position.y + body[last].square.getSize().y;
+            temp.position.y = prev_position.y + 24;//body[last].square.getSize().y;
             break;
         default:
             break;
     }
     temp.square.setPosition(temp.position);
     body.push_back(temp);
+
+    if(body.size()>2){
+        if(body[last].direction == 0){
+            body[last].square.setTexture(snake_texture->body[0], false);
+        }
+        else if(body[last].direction == 1){
+            body[last].square.setTexture(snake_texture->body[1], false);
+        }
+        else if(body[last].direction == 2){
+            body[last].square.setTexture(snake_texture->body[2], false);
+        }
+        else if(body[last].direction == 3){
+            body[last].square.setTexture(snake_texture->body[3], false);
+        }
+    }
 }
 
 
-void Snake::move(){
+void Snake::move(const texture* snake_texture){
     int size = body.size();
     if(size>1){
         for(int i=1; i<size; i++){
@@ -100,6 +142,34 @@ void Snake::move(){
         
             if(body[i].direction != body[i-1].direction && body[i].position == body[i-1].position_change){
                 body[i].direction = body[i-1].direction;
+                if(i<size-1){
+                    if(body[i].direction == 0){
+                        body[i].square.setTexture(snake_texture->body[0], false);
+                    }
+                    else if(body[i].direction == 1){
+                        body[i].square.setTexture(snake_texture->body[1], false);
+                    }
+                    else if(body[i].direction == 2){
+                        body[i].square.setTexture(snake_texture->body[2], false);
+                    }
+                    else if(body[i].direction == 3){
+                        body[i].square.setTexture(snake_texture->body[3], false);
+                    }
+                }
+                else{
+                    if(body[i].direction == 0){
+                        body[i].square.setTexture(snake_texture->tail[0], false);
+                    }
+                    else if(body[i].direction == 1){
+                        body[i].square.setTexture(snake_texture->tail[1], false);
+                    }
+                    else if(body[i].direction == 2){
+                        body[i].square.setTexture(snake_texture->tail[2], false);
+                    }
+                    else if(body[i].direction == 3){
+                        body[i].square.setTexture(snake_texture->tail[3], false);
+                    }
+                }
                 body[i].position_change = body[i].position;
             }
         

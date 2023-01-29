@@ -72,6 +72,7 @@ void Scoreboard::saveData(){
     int file_score_i = std::stoi(file_score);
         std::string current_score_s = score.getString();
         current_score_s.erase(0,7);
+        //std::cout<<current_score_s<<'\n';
         int current_score_i = std::stoi(current_score_s);
 
     if(file_score_i < current_score_i){
@@ -86,4 +87,23 @@ void Scoreboard::saveData(){
         } 
     }
 
+}
+
+void Scoreboard::resetData(){
+    std::ofstream output("bin/data/score.dat", std::ios::out | std::ios::binary);
+    if(output){
+        output<<0;
+        output.close();
+    }
+    else
+        std::cerr<<"resetData()::Impossibile aprire il file score.dat in scrittura"<<'\n';
+    
+    std::string newbest = "BEST: 0";
+
+    bestScore.setString(newbest);
+}
+
+void Scoreboard::showData(){
+    score.setCharacterSize(60);
+    score.setPosition(365, 100);
 }

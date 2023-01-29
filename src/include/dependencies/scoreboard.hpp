@@ -3,6 +3,8 @@ class Scoreboard{
         Scoreboard(sf::Font font);
         std::string pickUpData();
         void saveData();
+        void resetData();
+        void showData();
 
         sf::RectangleShape background;
         sf::Text score;

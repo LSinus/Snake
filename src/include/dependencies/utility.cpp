@@ -1,5 +1,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include "scoreboard.hpp"
 #include <iostream>
@@ -321,4 +322,25 @@ button_shapes* button_shape){
     button_shape->resetlosebutton.setTexture(&menu_texture->reset_selected);
     button_shape->resetlosebutton.setPosition(358, 363);
 
+}
+
+void loadSounds(audio_buffer* buffer, audio_sound* sound){
+
+    if (buffer->click_buffer.loadFromFile("src/audio/click.wav")){
+        std::cerr<<"Impossibile caricare la risorsa audio";
+    }
+    if (buffer->hover_buffer.loadFromFile("src/audio/hover.wav")){
+        std::cerr<<"Impossibile caricare la risorsa audio";
+    }
+    if (buffer->eat_buffer.loadFromFile("src/audio/eat.wav")){
+        std::cerr<<"Impossibile caricare la risorsa audio";
+    }
+    if (buffer->die_buffer.loadFromFile("src/audio/die.wav")){
+        std::cerr<<"Impossibile caricare la risorsa audio";
+    }
+
+    sound->click_sound.setBuffer(buffer->click_buffer);
+    sound->hover_sound.setBuffer(buffer->hover_buffer);
+    sound->eat_sound.setBuffer(buffer->eat_buffer);
+    sound->die_sound.setBuffer(buffer->die_buffer);
 }

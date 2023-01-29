@@ -1,5 +1,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 
 #include "dependencies/size.hpp"
@@ -39,6 +40,11 @@ int main(){
     button_shapes button_shape;
 
     loadTextures(&menu_texture, &apple_texture, &snake_texture, &background_shape, &button_shape);
+
+    audio_buffer buffer;
+    audio_sound sound;
+
+    loadSounds(&buffer, &sound);
 
     sf::RectangleShape map(sf::Vector2f(942.f, 480.f));
     map.setPosition(38.f, 38.f);
@@ -126,29 +132,53 @@ int main(){
             if(window.hasFocus()){
 
                 sf::Vector2i mouseposition = sf::Mouse::getPosition(window);
-                flag.isMenuSelected = selectMenu(mouseposition);
 
                 //PLAY BUTTON CLICK
                 if(flag.isWelcomeMenu){
                     flag.isPlaySelected = selectPlay(mouseposition);
                     flag.isResetSelected = selectReset(mouseposition);
                     flag.isExitSelected = selectExit(mouseposition);
+                    
+                    //PLAY HOVER SOUND
+                    if(flag.isPlaySelected && flag.isPlaySelected_hover){
+                        sound.hover_sound.play();
+                        flag.isPlaySelected_hover = false;
+                    }
+                    if(!flag.isPlaySelected)
+                        flag.isPlaySelected_hover = true;
+
+                    //RESET SCORE HOVER SOUND
+                    if(flag.isResetSelected && flag.isResetSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isResetSelected_hover = false;
+                    }
+                    if(!flag.isResetSelected)
+                        flag.isResetSelected_hover = true;
+
+                    //EXIT HOVER SOUND
+                    if(flag.isExitSelected && flag.isExitSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isExitSelected_hover = false;
+                    }
+                    if(!flag.isExitSelected)
+                        flag.isExitSelected_hover = true;
+                    
+                    //SELECTION
                     if(flag.isPlaySelected && click()){
+                        sound.click_sound.play();
                         flag.isWelcomeMenu = false;
                     }
                     else if(flag.isResetSelected && click()){
+                        sound.click_sound.play();
                         scoreboard.resetData();
                         scoreboard.pickUpData();
                     }
                     else if(flag.isExitSelected && click()){
+                        sound.click_sound.play();
                         scoreboard.saveData();
                         window.close();
                         thread.terminate();
                     }
-                }
-
-                if(flag.isMenuSelected && click()){
-                    flag.isMenuClicked = true;
                 }
 
                 if(flag.isMenuClicked){
@@ -158,20 +188,57 @@ int main(){
                     flag.isExitSelected = selectExit(mouseposition);
                     flag.isPlayAgainSelected = selectPlayAgain(mouseposition);
                     
-                    if(flag.isResumeSelected && click())
-                        flag.isMenuClicked = false;
+                    //RESUME HOVER SOUND
+                    if(flag.isResumeSelected && flag.isResumeSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isResumeSelected_hover = false;
+                    }
+                    if(!flag.isResumeSelected)
+                        flag.isResumeSelected_hover = true;
+
+                    //PLAY AGAIN HOVER SOUND
+                    if(flag.isPlayAgainSelected && flag.isPlayAgainSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isPlayAgainSelected_hover = false;
+                    }
+                    if(!flag.isPlayAgainSelected)
+                        flag.isPlayAgainSelected_hover = true;
+
+                    //RESET SCORE HOVER SOUND
+                    if(flag.isResetSelected && flag.isResetSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isResetSelected_hover = false;
+                    }
+                    if(!flag.isResetSelected)
+                        flag.isResetSelected_hover = true;
+
+                    //EXIT HOVER SOUND
+                    if(flag.isExitSelected && flag.isExitSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isExitSelected_hover = false;
+                    }
+                    if(!flag.isExitSelected)
+                        flag.isExitSelected_hover = true;
                     
+                    //SELECTION
+                    if(flag.isResumeSelected && click()){
+                        sound.click_sound.play();
+                        flag.isMenuClicked = false;
+                    }
                     if(flag.isResetSelected && click()){
+                        sound.click_sound.play();
                         scoreboard.resetData();
                         flag.isResetSelected = false;
                         flag.isMenuClicked = false;
                     }
                     if(flag.isExitSelected && click()){
+                        sound.click_sound.play();
                         scoreboard.saveData();
                         window.close();
                         thread.terminate();
                     }
                     if(flag.isPlayAgainSelected && click()){
+                        sound.click_sound.play();
                         scoreboard.saveData();
                         input = -1;
                         Snake snakeTemp(map_size, (seed+rand()), &snake_texture);
@@ -190,17 +257,46 @@ int main(){
                     flag.isResetSelected = selectResetLose(mouseposition);
                     flag.isExitSelected = selectExit(mouseposition);
                     flag.isPlayAgainSelected = selectPlayAgainLose(mouseposition);
+                    
+                    //PLAY AGAIN HOVER SOUND
+                    if(flag.isPlayAgainSelected && flag.isPlayAgainSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isPlayAgainSelected_hover = false;
+                    }
+                    if(!flag.isPlayAgainSelected)
+                        flag.isPlayAgainSelected_hover = true;
 
+                    //RESET SCORE HOVER SOUND
+                    if(flag.isResetSelected && flag.isResetSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isResetSelected_hover = false;
+                    }
+                    if(!flag.isResetSelected)
+                        flag.isResetSelected_hover = true;
+
+                    //EXIT HOVER SOUND
+                    if(flag.isExitSelected && flag.isExitSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isExitSelected_hover = false;
+                    }
+                    if(!flag.isExitSelected)
+                        flag.isExitSelected_hover = true;
+                    
+
+                    //SELECTION 
                     if(flag.isResetSelected && click()){
                         scoreboard.resetData();
+                        sound.click_sound.play();
                         flag.isResetSelected = false;
                     }
                     if(flag.isExitSelected && click()){
+                        sound.click_sound.play();
                         scoreboard.saveData();
                         window.close();
                         thread.terminate();
                     }
                     if(flag.isPlayAgainSelected && click()){
+                        sound.click_sound.play();
                         //scoreboard.saveData();
                         input = -1;
                         Snake snakeTemp(map_size, (seed+rand()), &snake_texture);
@@ -215,6 +311,22 @@ int main(){
                 }
 
                 if(flag.isMenuClicked == false && flag.isWelcomeMenu == false && flag.isLoseMenu == false){
+                    
+                    flag.isMenuSelected = selectMenu(mouseposition);
+                    
+                    //MENU HOVER
+                    if(flag.isMenuSelected && flag.isMenuSelected_hover){
+                        sound.hover_sound.play();
+                        flag.isMenuSelected_hover = false;
+                    }
+                    if(!flag.isMenuSelected)
+                        flag.isMenuSelected_hover = true;
+
+                    //SELECTION
+                    if(flag.isMenuSelected && click()){
+                        sound.click_sound.play();
+                        flag.isMenuClicked = true;
+                    }
 
                     //SCORE POSITION SHIFTING
                     if(score/10 == 0)
@@ -242,12 +354,14 @@ int main(){
                     flag.eat = apple.eat(snake.body[0].position, &apple_index);
                     
                     if(flag.eat){
+                        sound.eat_sound.play();
                         apple.eaten(apple_index);
                         apple.generate(map_size, snake, apple_index);
                         snake.grow(&snake_texture);
                         flag.eat = false;    
                     }
                     if(flag.isDead){
+                        sound.die_sound.play();
                         scoreboard.saveData();
                         scoreboard.showData();
 

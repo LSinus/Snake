@@ -12,3 +12,4 @@ bool selectResetLose(sf::Vector2i);
 
 void setScoreboard(Scoreboard* scoreboard, sf::Font* font);
 void loadTextures(menu_textures* menu_textures, sf::Texture* apple_texture, texture* snake_texture, backgrounds_shapes* backgrounds_shape, button_shapes* button_shape);
+void loadSounds(audio_buffer* buffer, audio_sound* sound);

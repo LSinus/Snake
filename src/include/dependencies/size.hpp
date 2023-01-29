@@ -60,6 +60,27 @@ struct flags{
     bool isResumeSelected = false;
     bool isDead = false;
     bool isLoseMenu = false;
+
+    bool isPlaySelected_hover = true;
+    bool isResetSelected_hover = true;
+    bool isExitSelected_hover = true;
+    bool isPlayAgainSelected_hover = true;
+    bool isResumeSelected_hover = true;
+    bool isMenuSelected_hover = true;
+};
+
+struct audio_buffer{
+    sf::SoundBuffer click_buffer;
+    sf::SoundBuffer hover_buffer;
+    sf::SoundBuffer eat_buffer;
+    sf::SoundBuffer die_buffer;
+};
+
+struct audio_sound{
+    sf::Sound click_sound;
+    sf::Sound hover_sound;
+    sf::Sound eat_sound;
+    sf::Sound die_sound;
 };
 
 float abs(sf::Vector2f);

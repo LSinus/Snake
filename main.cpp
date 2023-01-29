@@ -25,6 +25,10 @@ int main(){
     sf::Clock timer;
     sf::RenderWindow window(sf::VideoMode(1020, 600), "Snake", sf::Style::Titlebar | sf::Style::Close);
 
+    sf::Image icon;
+    icon.loadFromFile("src/imgs/icon.png");
+    window.setIcon(128, 128, icon.getPixelsPtr());
+
     window.setActive(false);
     window.setKeyRepeatEnabled(false);
 
@@ -69,13 +73,15 @@ int main(){
     
     flags flag;
 
+    int bestscore;
+    int score;
 
     Snake snake(map_size, seed, &snake_texture);
 
     Apple apple(map_size, seed, &apple_texture);
     
 
-    sf::Thread thread(std::bind(&renderingThread, &window, &background_shape, &menu_texture, &button_shape, &map, &scoreboard, &snake, &apple, &flag));
+    sf::Thread thread(std::bind(&renderingThread, &window, &background_shape, &menu_texture, &button_shape, &map, &scoreboard, &snake, &apple, &flag, &bestscore, &score));
     thread.launch();
 
     sf::Clock update_timer;
@@ -118,14 +124,6 @@ int main(){
             }
 
             if(window.hasFocus()){
-                
-                //SCORE POSITION SHIFTING
-                if((snake.body.size()-2)/10 > 0){
-                    scoreboard.score.setPosition(112,545);
-                }
-                if(snake.body.size()/10 > 10){
-                    scoreboard.score.setPosition(107,545);
-                }
 
                 sf::Vector2i mouseposition = sf::Mouse::getPosition(window);
                 flag.isMenuSelected = selectMenu(mouseposition);
@@ -154,12 +152,15 @@ int main(){
                 }
 
                 if(flag.isMenuClicked){
+                    
                     flag.isResumeSelected = resume(mouseposition);
                     flag.isResetSelected = selectReset(mouseposition);
                     flag.isExitSelected = selectExit(mouseposition);
                     flag.isPlayAgainSelected = selectPlayAgain(mouseposition);
+                    
                     if(flag.isResumeSelected && click())
                         flag.isMenuClicked = false;
+                    
                     if(flag.isResetSelected && click()){
                         scoreboard.resetData();
                         flag.isResetSelected = false;
@@ -213,46 +214,65 @@ int main(){
                     }
                 }
 
+                if(flag.isMenuClicked == false && flag.isWelcomeMenu == false && flag.isLoseMenu == false){
 
-                update_clock = update_timer.getElapsedTime();
-                if(update_clock.asMilliseconds() >= velocity_increment && flag.isMenuClicked == false && flag.isWelcomeMenu == false){
-                    //std::cout<<change_direction_countdown<<'\n';
-                    flag.isDead = update(&snake, &velocity, &map, &input, &change_direction_countdown, &snake_texture);
-                    update_timer.restart();
-                }
-
-                flag.eat = apple.eat(snake.body[0].position, &apple_index);
-                
-                if(flag.eat){
-                    apple.eaten(apple_index);
-                    apple.generate(map_size, snake, apple_index);
-                    snake.grow(&snake_texture);
-                    flag.eat = false;    
-                }
-                if(flag.isDead){
-                    scoreboard.saveData();
-                    scoreboard.showData();
-
-                    flag.isLoseMenu = true;
-                    flag.isDead = false;
-
+                    //SCORE POSITION SHIFTING
+                    if(score/10 == 0)
+                        scoreboard.score.setPosition(120,545);
+                    if(score/10 > 0 && score/10 < 10)
+                        scoreboard.score.setPosition(112,545);
+                    if(score/10 >= 10)
+                        scoreboard.score.setPosition(107,545);
                     
-                }
-                
-                //std::cout<<eat<<'\n';
-                window.setFramerateLimit(144);
-                velocity_increment = velocity_increment - .00000003;
-                
-                if(velocity_increment<3.5 && apple.apple.size() == 1){
-                    apple.addApple(map_size, seed, &apple_texture);
-                }
+                    //BEST SCORE POSITION SHIFTING
+                    if(bestscore/10 == 0)
+                        scoreboard.bestScore.setPosition(815,545);
+                    if(bestscore/10 > 0 && bestscore/10 < 10)
+                        scoreboard.bestScore.setPosition(807,545);
+                    if(bestscore/10 >= 10)
+                        scoreboard.bestScore.setPosition(799,545);
 
-                if(velocity_increment<2.5 && apple.apple.size() == 2){
-                    apple.addApple(map_size, seed, &apple_texture);
+                    update_clock = update_timer.getElapsedTime();
+                    if(update_clock.asMilliseconds() >= velocity_increment){
+                        //std::cout<<change_direction_countdown<<'\n';
+                        flag.isDead = update(&snake, &velocity, &map, &input, &change_direction_countdown, &snake_texture);
+                        update_timer.restart();
+                    }
+
+                    flag.eat = apple.eat(snake.body[0].position, &apple_index);
+                    
+                    if(flag.eat){
+                        apple.eaten(apple_index);
+                        apple.generate(map_size, snake, apple_index);
+                        snake.grow(&snake_texture);
+                        flag.eat = false;    
+                    }
+                    if(flag.isDead){
+                        scoreboard.saveData();
+                        scoreboard.showData();
+
+                        flag.isLoseMenu = true;
+                        flag.isDead = false;
+
+                        
+                    }
+                    //std::cout<<eat<<'\n';
+                    window.setFramerateLimit(144);
+                    velocity_increment = velocity_increment - .00000003;
+                    
+                    if(velocity_increment<3.5 && apple.apple.size() == 1){
+                        apple.addApple(map_size, seed, &apple_texture);
+                    }
+
+                    if(velocity_increment<2.5 && apple.apple.size() == 2){
+                        apple.addApple(map_size, seed, &apple_texture);
+                    }
                 }
             }
+
             else{
-                flag.isMenuClicked = true;
+                if(!flag.isLoseMenu && !flag.isWelcomeMenu)
+                    flag.isMenuClicked = true;
                 window.setFramerateLimit(30);
             }
 

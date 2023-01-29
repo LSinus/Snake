@@ -152,23 +152,17 @@ void setScoreboard(Scoreboard* scoreboard, sf::Font* font){
     scoreboard->score.setCharacterSize(20);
     scoreboard->score.setFillColor(sf::Color::Black);
     scoreboard->score.setString("0");
-    scoreboard->score.setPosition(120,545); 
+    scoreboard->score.setPosition(120,545);
+
 
     scoreboard->bestScore.setFont(*font);
     scoreboard->bestScore.setCharacterSize(20);
     scoreboard->bestScore.setFillColor(sf::Color::Black);
     std::string best_score = "BEST: " + scoreboard->pickUpData();
     scoreboard->bestScore.setString(best_score);
+    scoreboard->bestScore.setPosition(815,545);
+
     
-    if(stoi(scoreboard->pickUpData())/10 == 0){
-        scoreboard->bestScore.setPosition(815,545);
-    }
-    else if(stoi(scoreboard->pickUpData())/10 <= 10){
-        scoreboard->bestScore.setPosition(807,545);
-    }
-    else{
-        scoreboard->bestScore.setPosition(800,545);
-    }
 
 }
 

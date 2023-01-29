@@ -8,12 +8,13 @@ compile:
 	g++ -Isrc/include -c src/include/dependencies/snake.cpp
 	g++ -Isrc/include -c src/include/dependencies/rendering.cpp
 	g++ -Isrc/include -c main.cpp
+	windres snake.rc -O coff -o snake.res
 
 link:
-	g++ main.o apple.o utility.o scoreboard.o size.o rendering.o snake.o -o Snake -Wl,-rpath=/bin -Lsrc/lib -lsfml-graphics -lsfml-window -lsfml-system 
+	g++ main.o apple.o utility.o scoreboard.o size.o rendering.o snake.o snake.res -o Snake -Wl,-rpath=/bin -Lsrc/lib -lsfml-graphics -lsfml-window -lsfml-system -mwindows
 
 clean:
-	del main.o rendering.o utility.o apple.o snake.o size.o scoreboard.o
+	del main.o rendering.o utility.o apple.o snake.o size.o scoreboard.o snake.res
 
 run:
 	Snake

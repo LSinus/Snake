@@ -90,7 +90,7 @@ void Scoreboard::saveData(){
 }
 
 void Scoreboard::resetData(){
-    std::ofstream output("bin/data/score.dat", std::ios::out | std::ios::binary);
+    std::ofstream output("bin/data/score.dat", std::ios::trunc | std::ios::binary);
     if(output){
         output<<0;
         output.close();
@@ -105,5 +105,16 @@ void Scoreboard::resetData(){
 
 void Scoreboard::showData(){
     score.setCharacterSize(60);
-    score.setPosition(365, 100);
+
+    std::string temp;
+    temp = score.getString();
+    temp.erase(0,7);
+
+    if(stoi(temp)/10 == 0)
+        score.setPosition(365, 100);
+    if(stoi(temp)/10 > 0 && stoi(temp)/10 <10)
+        score.setPosition(340,100);
+    if(stoi(temp)/10 >= 10)
+        score.setPosition(320,100);
+
 }
